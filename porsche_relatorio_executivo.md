@@ -6,13 +6,9 @@ Este relatório executivo apresenta a análise consolidada das transações de v
 
 ## 📌 Acesso ao Dashboard Interativo em HTML
 
-O dashboard interativo em HTML está disponível para navegação e consulta:
-* **Arquivo HTML no Workspace:** [`index.html`](file:///C:/Users/Rapha/.gemini/antigravity/scratch/porsche_dashboard/index.html)
-* **Visualização no Painel / Artefato:** [`porsche_sales_dashboard.html`](file:///C:/Users/Rapha/.gemini/antigravity/brain/fd466f2e-2ceb-4bfc-aa22-83a4bee347ea/porsche_sales_dashboard.html)
-* **Diretório do Projeto:** [`porsche_dashboard`](file:///C:/Users/Rapha/.gemini/antigravity/scratch/porsche_dashboard)
+[![Acessar Dashboard]    (https://img.shields.io/badge/Acessar%20Dashboard%20Online-D5001C?style=for-the-badge&logo=porsche&logoColor=white)](https://raphaelberalto.github.io/dashboard-de-vendas-com-IA-para-porsche/)
 
-> [!TIP]
-> Abra o arquivo [`index.html`](file:///C:/Users/Rapha/.gemini/antigravity/scratch/porsche_dashboard/index.html) diretamente no seu navegador (Google Chrome, Microsoft Edge, etc.) para utilizar os segmentadores (*slicers*), filtros cruzados em tempo real, pesquisa dinâmica e exportação CSV.
+🔗 **Link direto:** [https://<seu-usuario>.github.io/<seu-repositorio>/](https://raphaelberalto.github.io/dashboard-de-vendas-com-IA-para-porsche/)
 
 ---
 
