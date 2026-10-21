@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Porsche Inteligência de Vendas | Painel Executivo Power BI</title>
+  <!-- Tailwind CSS permitido no ambiente AGY -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Tipografia Porsche & Estilos Customizados de Alto Padrão */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+    :root {
+      --porsche-red: #D5001C;
+      --porsche-red-hover: #B80018;
+      --porsche-red-glow: rgba(213, 0, 28, 0.35);
+      --porsche-gold: #C5A059;
+      --porsche-gold-light: #DFC488;
+      --porsche-dark: #0A0D14;
+      --porsche-card: #121722;
+      --porsche-card-border: rgba(255, 255, 255, 0.08);
+      --porsche-card-hover: rgba(255, 255, 255, 0.12);
+      --porsche-silver: #E2E8F0;
+      --porsche-muted: #8E9BAE;
+      --porsche-accent: #1E2536;
+    }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--porsche-dark);
+      color: var(--porsche-silver);
+      min-height: 100vh;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Efeito de showroom exclusivo Porsche com gradientes radiais */
+    .porsche-bg-mesh {
+      background: 
+        radial-gradient(circle at 10% 0%, rgba(213, 0, 28, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 10%, rgba(197, 160, 89, 0.08) 0%, transparent 35%),
+        radial-gradient(circle at 50% 100%, rgba(30, 37, 54, 0.5) 0%, transparent 60%),
+        #0A0D14;
+    }
+
+    /* Card no padrão Power BI com bordas acetinadas */
+    .pbi-card {
+      background-color: var(--porsche-card);
+      border: 1px solid var(--porsche-card-border);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .pbi-card:hover {
+      border-color: var(--porsche-card-hover);
+      box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.7);
+    }
+
+    .porsche-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    /* Barras de Rolagem Estilo Power BI */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(10, 13, 20, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--porsche-red);
+    }
+
+    /* Botões Segmentadores (Slicers) */
+    .slicer-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--porsche-muted);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .slicer-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFF;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .slicer-btn.active {
+      background: var(--porsche-red);
+      color: #FFF;
+      border-color: var(--porsche-red);
+      box-shadow: 0 0 14px var(--porsche-red-glow);
+      font-weight: 600;
+    }
+
+    /* Tooltip Flutuante Power BI */
+    #dashboard-tooltip {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      transform: translate(-50%, -115%);
+      background: rgba(12, 16, 24, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    /* Tipografia Porsche Monospaced Lettering */
+    .porsche-lettering {
+      letter-spacing: 0.35em;
+      font-weight: 800;
+      color: #FFFFFF;
+      text-transform: uppercase;
+    }
+
+    /* Ponto de Pulso ao Vivo */
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #10B981;
+      box-shadow: 0 0 8px #10B981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #10B981; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    /* Animação Suave das Barras */
+    .bar-grow {
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="porsche-bg-mesh antialiased">
+
+  <!-- Elemento Tooltip -->
+  <div id="dashboard-tooltip" class="hidden"></div>
+
+  <!-- Container Principal -->
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- ========================================== -->
+    <!-- CABEÇALHO EXECUTIVO (ESTILO POWER BI)      -->
+    <!-- ========================================== -->
+    <header class="pbi-card p-5 relative overflow-hidden border-t-2 border-t-[#D5001C]">
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute left-1/3 -bottom-10 w-48 h-48 bg-amber-500/5 rounded-full blur-2xl pointer-events-none"></div>
+
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 relative z-10">
+        <!-- Marca & Título -->
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="porsche-lettering text-xs sm:text-sm text-zinc-300">P O R S C H E</span>
+            <span class="h-3 w-px bg-zinc-700"></span>
+            <div class="flex items-center gap-2">
+              <span class="pulse-dot"></span>
+              <span class="text-xs uppercase tracking-wider text-emerald-400 font-semibold">Base de Vendas Ativa</span>
+            </div>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mt-1 flex items-center gap-3">
+            <span>Inteligência Executiva de Vendas</span>
+            <span class="text-xs font-normal px-2.5 py-0.5 rounded border border-zinc-700 bg-zinc-800/80 text-zinc-300 uppercase tracking-wider">Edição Power BI</span>
+          </h1>
+          <p class="text-sm text-zinc-400 mt-0.5">
+            Performance comercial de veículos seminovos e zero-km • Análise consolidada de faturamento, canais de pagamento e penetração geográfica.
+          </p>
+        </div>
+
+        <!-- Ações & Informações de Filtros -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div id="active-filters-pill" class="hidden items-center gap-2 px-3 py-1.5 rounded-lg bg-red-950/60 border border-red-800/60 text-xs text-red-200">
+            <span class="font-bold text-red-400">Filtro Ativo:</span>
+            <span id="active-filters-text" class="text-zinc-200">Nenhum</span>
+            <button id="clear-filters-btn" class="ml-1 text-red-400 hover:text-white font-bold" title="Limpar Filtro">✕</button>
+          </div>
+
+          <button id="reset-all-btn" class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700 text-xs font-semibold text-zinc-200 hover:text-white transition shadow-sm">
+            <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <span>Resetar Todos os Filtros</span>
+          </button>
+
+          <button id="export-csv-btn" class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#D5001C] hover:bg-[#b50018] text-white text-xs font-bold transition shadow-md shadow-red-900/30">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Exportar CSV Filtrado</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- SEGMENTADORES DE DADOS (POWER BI SLICERS)  -->
+    <!-- ========================================== -->
+    <section class="pbi-card p-4">
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            <span class="text-xs uppercase font-bold tracking-wider text-zinc-300">Segmentadores de Dados (Filtros Interativos)</span>
+          </div>
+          <span class="text-[11px] text-zinc-500">Clique para filtrar todos os visuais do painel instantaneamente</span>
+        </div>
+
+        <!-- Linha de Segmentadores: Linhas Porsche -->
+        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-zinc-800">
+          <span class="text-xs font-semibold text-zinc-400 mr-1">Linha do Veículo:</span>
+          <button class="slicer-btn active" data-filter="family" data-value="ALL">Todas as Linhas (<span id="count-all-family">76</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="911">911 (<span id="count-fam-911">16</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="Taycan">Taycan (<span id="count-fam-taycan">14</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="Panamera">Panamera (<span id="count-fam-panamera">13</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="Macan">Macan (<span id="count-fam-macan">13</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="Cayenne">Cayenne (<span id="count-fam-cayenne">12</span>)</button>
+          <button class="slicer-btn" data-filter="family" data-value="718">718 Boxster / Cayman (<span id="count-fam-718">8</span>)</button>
+        </div>
+
+        <!-- Linha de Segmentadores: Status de Entrega & Busca -->
+        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-zinc-800">
+          <span class="text-xs font-semibold text-zinc-400 mr-1">Status de Entrega:</span>
+          <button class="slicer-btn active" data-filter="status" data-value="ALL">Todos os Status</button>
+          <button class="slicer-btn" data-filter="status" data-value="Delivered">Entregue (36)</button>
+          <button class="slicer-btn" data-filter="status" data-value="In Transit">Em Trânsito / Despachado (11)</button>
+          <button class="slicer-btn" data-filter="status" data-value="Pending">Pendente / Em Revisão (15)</button>
+          <button class="slicer-btn" data-filter="status" data-value="Awaiting">Aguardando Entrega / Retirada (8)</button>
+          <button class="slicer-btn" data-filter="status" data-value="Cancelled">Cancelado (6)</button>
+          
+          <div class="ml-auto flex items-center gap-2">
+            <span class="text-xs font-semibold text-zinc-400">Buscar:</span>
+            <input id="search-input" type="text" placeholder="Buscar modelo, cidade, pagamento..." class="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-1 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#D5001C] w-48 sm:w-60 transition">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CARTÕES DE INDICADORES / KPIS (NO TOPO)    -->
+    <!-- ========================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      
+      <!-- KPI 1: TOTAL DE VENDAS (SOLICITADO) -->
+      <div class="pbi-card p-5 relative overflow-hidden border-l-4 border-l-[#D5001C] flex flex-col justify-between">
+        <div class="flex items-center justify-between text-zinc-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Total de Vendas</span>
+          <div class="w-8 h-8 rounded-lg bg-red-950/60 border border-red-800/50 flex items-center justify-center text-red-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-total-sales" class="mono text-3xl font-extrabold text-white tracking-tight">76</span>
+            <span class="text-xs text-zinc-400 font-medium">veículos vendidos</span>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80">
+            <span>Base consolidada</span>
+            <span id="kpi-sales-pct" class="font-semibold text-emerald-400">100% da base ativa</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 2: RECEITA TOTAL (SOLICITADO) -->
+      <div class="pbi-card p-5 relative overflow-hidden border-l-4 border-l-[#C5A059] flex flex-col justify-between">
+        <div class="flex items-center justify-between text-zinc-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Receita Total</span>
+          <div class="w-8 h-8 rounded-lg bg-amber-950/60 border border-amber-800/50 flex items-center justify-center text-amber-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-total-revenue" class="mono text-2xl sm:text-[25px] font-extrabold text-white tracking-tight">US$ 9.486.700,50</span>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80">
+            <span>Faturamento Bruto</span>
+            <span id="kpi-revenue-mil" class="font-semibold text-amber-300">US$ 9,49M faturados</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 3: TICKET MÉDIO -->
+      <div class="pbi-card p-5 relative overflow-hidden border-l-4 border-l-blue-500 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-zinc-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Ticket Médio</span>
+          <div class="w-8 h-8 rounded-lg bg-blue-950/60 border border-blue-800/50 flex items-center justify-center text-blue-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-avg-price" class="mono text-2xl font-extrabold text-white tracking-tight">US$ 124.825,01</span>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80">
+            <span>Preço Médio / Unidade</span>
+            <span class="font-semibold text-blue-400">Segmento Alto Luxo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 4: VEÍCULO MAIS VALIOSO -->
+      <div class="pbi-card p-5 relative overflow-hidden border-l-4 border-l-purple-500 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-zinc-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Veículo Mais Valioso</span>
+          <div class="w-8 h-8 rounded-lg bg-purple-950/60 border border-purple-800/50 flex items-center justify-center text-purple-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-baseline gap-1">
+            <span id="kpi-max-price" class="mono text-2xl font-extrabold text-white tracking-tight">US$ 271.700,00</span>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80">
+            <span id="kpi-max-vehicle" class="truncate max-w-[130px] text-zinc-300">911 Dakar (2024)</span>
+            <span class="font-semibold text-purple-300">1º Lugar Geral</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI 5: ENTREGAS EFETIVADAS -->
+      <div class="pbi-card p-5 relative overflow-hidden border-l-4 border-l-emerald-500 flex flex-col justify-between">
+        <div class="flex items-center justify-between text-zinc-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-zinc-300">Taxa de Concretização</span>
+          <div class="w-8 h-8 rounded-lg bg-emerald-950/60 border border-emerald-800/50 flex items-center justify-center text-emerald-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          </div>
+        </div>
+        <div class="mt-3">
+          <div class="flex items-baseline gap-2">
+            <span id="kpi-delivered-pct" class="mono text-3xl font-extrabold text-white tracking-tight">47,4%</span>
+            <span id="kpi-delivered-count" class="text-xs text-zinc-400 font-medium">36 entregues</span>
+          </div>
+          <div class="mt-2 flex items-center justify-between text-[11px] text-zinc-400 pt-2 border-t border-zinc-800/80">
+            <span>Status 'Entregue'</span>
+            <span class="font-semibold text-emerald-400">Entregas Concluídas</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- LINHA 1 DE VISUAIS: MÉTODOS DE PAGAMENTO & CIDADES COM MAIORES VENDAS     -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- VISUAL 1: INDICADORES POR MÉTODO DE PAGAMENTO (SOLICITADO) -->
+      <div class="lg:col-span-5 pbi-card p-5 flex flex-col justify-between">
+        <div>
+          <!-- Título & Alternador de Visão -->
+          <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#D5001C]"></span>
+                <span>Métodos de Pagamento</span>
+              </h2>
+              <p class="text-xs text-zinc-400 mt-0.5">Indicadores de quantidade e participação por meio de liquidação</p>
+            </div>
+            <div class="flex items-center gap-1 bg-zinc-900 p-0.5 rounded-lg border border-zinc-800 text-xs">
+              <button id="view-pay-donut" class="px-2.5 py-1 rounded bg-zinc-800 text-white font-semibold">Rosca</button>
+              <button id="view-pay-bars" class="px-2.5 py-1 rounded text-zinc-400 hover:text-white">Barras</button>
+            </div>
+          </div>
+
+          <!-- Visão 1: Gráfico de Rosca + Legenda Detalhada -->
+          <div id="payment-donut-container" class="mt-4 flex flex-col sm:flex-row items-center gap-4">
+            <!-- Gráfico SVG Donut -->
+            <div class="relative w-48 h-48 flex-shrink-0 flex items-center justify-center">
+              <svg id="donut-svg" class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <!-- Fatias injetadas via JS -->
+              </svg>
+              <!-- Rótulo Central -->
+              <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span id="donut-center-val" class="mono text-xl font-extrabold text-white">76</span>
+                <span class="text-[10px] text-zinc-400 uppercase tracking-wider">Transações</span>
+              </div>
+            </div>
+
+            <!-- Lista de Métricas Lateral -->
+            <div id="payment-legend-list" class="w-full space-y-1.5 max-h-56 overflow-y-auto pr-1">
+              <!-- Injetado via JS -->
+            </div>
+          </div>
+
+          <!-- Visão 2: Barras Horizontais com Faturamento (Opcional) -->
+          <div id="payment-bars-container" class="mt-4 hidden space-y-2 max-h-60 overflow-y-auto pr-1">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+
+        <!-- Rodapé do Card -->
+        <div class="mt-4 pt-3 border-t border-zinc-800 flex items-center justify-between text-[11px] text-zinc-400">
+          <span>*Clique no método para filtrar todo o painel</span>
+          <span class="text-amber-400 font-semibold">Líder: Transferência Wire (16 un.)</span>
+        </div>
+      </div>
+
+      <!-- VISUAL 2: CIDADES COM MAIORES QUANTIDADES DE VENDAS (SOLICITADO) -->
+      <div class="lg:col-span-7 pbi-card p-5 flex flex-col justify-between">
+        <div>
+          <!-- Título & Botão de Exibição -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-zinc-800 gap-2">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#C5A059]"></span>
+                <span>Cidades com Maiores Quantidades de Vendas</span>
+              </h2>
+              <p class="text-xs text-zinc-400 mt-0.5">Ranking dos principais polos regionais e volumes comercializados</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xs text-zinc-400">Exibir:</span>
+              <button id="city-toggle-top" class="px-2.5 py-1 rounded text-xs font-semibold bg-[#C5A059] text-black">Principais Cidades</button>
+              <button id="city-toggle-all" class="px-2.5 py-1 rounded text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white">Todas as Cidades (49)</button>
+            </div>
+          </div>
+
+          <!-- Visual de Barras Horizontais Ranqueadas -->
+          <div id="cities-chart-container" class="mt-4 space-y-2.5 max-h-[300px] overflow-y-auto pr-2">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+
+        <!-- Rodapé do Card / Destaque de Estados -->
+        <div class="mt-4 pt-3 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-2 text-[11px] text-zinc-400">
+          <div class="flex items-center gap-2">
+            <span>Destaque por Estado:</span>
+            <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 font-semibold">TX (11)</span>
+            <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 font-semibold">CA (9)</span>
+            <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 font-semibold">FL (6)</span>
+            <span class="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-200 font-semibold">NC (4)</span>
+          </div>
+          <span class="text-zinc-500">*Clique na cidade para isolar transações</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- LINHA 2: TOP 10 VEÍCULOS VENDIDOS POR PREÇO DE VENDA (SOLICITADO)         -->
+    <!-- ========================================================================= -->
+    <section class="pbi-card p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-zinc-800 gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-[#D5001C] animate-pulse"></span>
+            <h2 class="text-lg font-bold text-white tracking-tight">Top 10 Veículos Vendidos por Preço de Venda</h2>
+          </div>
+          <p class="text-xs text-zinc-400 mt-0.5">Classificação individual dos veículos de maior valor transacionados na base de dados</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-zinc-400">Ordenação: <strong class="text-white">Preço Decrescente (Maior Valor)</strong></span>
+          <span class="px-2.5 py-1 rounded bg-red-950/70 border border-red-800/60 text-xs font-semibold text-red-300">
+            Maior Preço: US$ 271.700 (911 Dakar)
+          </span>
+        </div>
+      </div>
+
+      <!-- Tabela Visual Estilo Power BI com Barras de Dados Inline -->
+      <div class="overflow-x-auto mt-3">
+        <table class="w-full text-left text-xs">
+          <thead>
+            <tr class="text-zinc-400 uppercase tracking-wider text-[11px] border-b border-zinc-800">
+              <th class="py-3 px-3 w-14 text-center">Posição</th>
+              <th class="py-3 px-3">Modelo Porsche</th>
+              <th class="py-3 px-3 w-20 text-center">Ano</th>
+              <th class="py-3 px-3 min-w-[220px]">Preço de Venda & Comparativo</th>
+              <th class="py-3 px-3">Localidade (Cidade/UF)</th>
+              <th class="py-3 px-3">Método de Pagamento</th>
+              <th class="py-3 px-3 text-center">Status de Entrega</th>
+              <th class="py-3 px-3 text-right">Quilometragem</th>
+            </tr>
+          </thead>
+          <tbody id="top10-table-body" class="divide-y divide-zinc-800/60">
+            <!-- Injetado via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- LINHA 3: MIX POR LINHA PORSCHE & TABELA COMPLETA COM BUSCA               -->
+    <!-- ========================================================================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- Linhas Porsche Mix (4 Colunas) -->
+      <div class="lg:col-span-4 pbi-card p-5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Mix por Linha Porsche</h3>
+            <span class="text-[11px] text-zinc-400">Volume & Faturamento</span>
+          </div>
+          <div id="family-breakdown-container" class="mt-4 space-y-3">
+            <!-- Injetado via JS -->
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-zinc-800 text-[11px] text-zinc-400">
+          A família <strong class="text-white">911</strong> lidera em faturamento (US$ 2,69M) e a linha <strong class="text-white">Taycan</strong> lidera a eletrificação esportiva (US$ 2,17M).
+        </div>
+      </div>
+
+      <!-- Detalhamento dos Registros de Vendas (8 Colunas) -->
+      <div class="lg:col-span-8 pbi-card p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-zinc-800 gap-2">
+          <div>
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>Detalhamento de Todas as Vendas</span>
+              <span id="filtered-records-badge" class="px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300 text-xs font-semibold">76 registros</span>
+            </h3>
+            <p class="text-xs text-zinc-400 mt-0.5">Explore e consulte os registros da planilha com busca e paginação dinâmica</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="toggle-all-data-btn" class="px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-300">
+              Expandir Tabela Completa
+            </button>
+          </div>
+        </div>
+
+        <div id="drillthrough-table-wrap" class="overflow-x-auto mt-3 max-h-[320px] overflow-y-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="sticky top-0 bg-[#121722] z-10">
+              <tr class="text-zinc-400 uppercase tracking-wider text-[11px] border-b border-zinc-800">
+                <th class="py-2.5 px-2">ID</th>
+                <th class="py-2.5 px-2">Data da Venda</th>
+                <th class="py-2.5 px-2">Modelo Porsche</th>
+                <th class="py-2.5 px-2 text-center">Ano</th>
+                <th class="py-2.5 px-2">Preço de Venda</th>
+                <th class="py-2.5 px-2">Método de Pagamento</th>
+                <th class="py-2.5 px-2">Cidade / UF</th>
+                <th class="py-2.5 px-2 text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody id="raw-table-body" class="divide-y divide-zinc-800/60">
+              <!-- Injetado via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- RODAPÉ CORPORATIVO                         -->
+    <!-- ========================================== -->
+    <footer class="pbi-card p-4 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-3">
+      <div class="flex items-center gap-2">
+        <span class="porsche-lettering text-[10px] text-zinc-400">PORSCHE</span>
+        <span>•</span>
+        <span>Painel Comercial Corporativo no Estilo Microsoft Power BI</span>
+      </div>
+      <div>
+        <span>Desenvolvido para análise de indicadores estratégicos de vendas fictícias Porsche</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MOTOR JAVASCRIPT REATIVO (VANILLA JS PURO, 100% OFFLINE, TOTALMENTE EM PT) -->
+  <!-- ========================================================================= -->
+  <script>
+    // Base de dados completa com 76 registros traduzidos
+    const RAW_DATA = [{"sale_id": 7, "date": "2024-03-14", "model": "911 Turbo S", "year": 2024, "price": 235000.0, "mileage": 1200.0, "pay_method": "Wire Transfer", "city": "Seattle", "state": "WA", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 8, "date": "2024-04-18", "model": "Cayenne Coupe", "year": 2023, "price": 112750.0, "mileage": 6400.0, "pay_method": "Financing", "city": "Austin", "state": "TX", "status": "In Transit", "pay_method_pt": "Financiamento", "status_pt": "Em Trânsito"}, {"sale_id": 10, "date": "2024-05-22", "model": "Taycan 4S", "year": 2024, "price": 121000.0, "mileage": 0.0, "pay_method": "Bank Transfer", "city": "Los Angeles", "state": "CA", "status": "Delivered", "pay_method_pt": "Transferência Bancária", "status_pt": "Entregue"}, {"sale_id": 11, "date": "2024-08-06", "model": "Panamera 4", "year": 2023, "price": 104500.0, "mileage": 14500.0, "pay_method": "Credit Card", "city": "Miami", "state": "FL", "status": "Cancelled", "pay_method_pt": "Cartão de Crédito", "status_pt": "Cancelado"}, {"sale_id": 12, "date": "2024-07-11", "model": "911 Carrera S", "year": 2020, "price": 96300.0, "mileage": 41000.0, "pay_method": "Lease", "city": "New York", "state": "NY", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}, {"sale_id": 14, "date": "2024-08-19", "model": "718 Boxster", "year": 2021, "price": 73500.0, "mileage": 22300.0, "pay_method": "Debit Card", "city": "Chicago", "state": "IL", "status": "Shipped", "pay_method_pt": "Cartão de Débito", "status_pt": "Despachado"}, {"sale_id": 15, "date": "2024-09-02", "model": "Macan GTS", "year": 2024, "price": 95000.0, "mileage": 3500.0, "pay_method": "Financing", "city": "Phoenix", "state": "AZ", "status": "In Transit", "pay_method_pt": "Financiamento", "status_pt": "Em Trânsito"}, {"sale_id": 16, "date": "2024-09-17", "model": "Taycan Turbo", "year": 2023, "price": 153200.5, "mileage": 11.0, "pay_method": "ACH Payment", "city": "Dallas", "state": "TX", "status": "Delivered", "pay_method_pt": "Débito Direto (ACH)", "status_pt": "Entregue"}, {"sale_id": 18, "date": "2024-05-11", "model": "Panamera Turbo S", "year": 2022, "price": 132000.0, "mileage": 19250.0, "pay_method": "Cash", "city": "San Jose", "state": "CA", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 19, "date": "2024-12-12", "model": "Cayenne Turbo GT", "year": 2024, "price": 188000.0, "mileage": 2100.0, "pay_method": "Crypto Payment", "city": "Houston", "state": "TX", "status": "Awaiting Delivery", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Aguardando Entrega"}, {"sale_id": 20, "date": "2024-12-25", "model": "911 Carrera Cabriolet", "year": 2023, "price": 127800.0, "mileage": 12000.0, "pay_method": "Credit Card", "city": "Atlanta", "state": "GA", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 21, "date": "2025-01-06", "model": "Macan", "year": 2021, "price": 58900.0, "mileage": 33700.0, "pay_method": "Bank Transfer", "city": "Orlando", "state": "FL", "status": "Pending", "pay_method_pt": "Transferência Bancária", "status_pt": "Pendente"}, {"sale_id": 23, "date": "2025-02-14", "model": "Taycan Cross Turismo", "year": 2023, "price": 118500.0, "mileage": 7800.0, "pay_method": "Wire Transfer", "city": "Charlotte", "state": "NC", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 25, "date": "2025-03-21", "model": "911 Targa 4S", "year": 2024, "price": 158750.0, "mileage": 2500.0, "pay_method": "Lease", "city": "Minneapolis", "state": "MN", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}, {"sale_id": 26, "date": "2025-03-28", "model": "Panamera", "year": 2020, "price": 72000.0, "mileage": 49000.0, "pay_method": "Bank Transfer", "city": "Philadelphia", "state": "PA", "status": "Cancelled", "pay_method_pt": "Transferência Bancária", "status_pt": "Cancelado"}, {"sale_id": 27, "date": "2025-04-09", "model": "Macan Electric", "year": 2025, "price": 86500.0, "mileage": 0.0, "pay_method": "Wire Transfer", "city": "San Antonio", "state": "TX", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 29, "date": "2025-05-12", "model": "Taycan GTS", "year": 2023, "price": 139000.0, "mileage": 6250.0, "pay_method": "Financing", "city": "Raleigh", "state": "NC", "status": "In Transit", "pay_method_pt": "Financiamento", "status_pt": "Em Trânsito"}, {"sale_id": 30, "date": "2025-06-18", "model": "Cayenne", "year": 2021, "price": 76800.0, "mileage": 38400.0, "pay_method": "Credit Card", "city": "Detroit", "state": "MI", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 32, "date": "2025-07-07", "model": "911 Carrera GTS", "year": 2022, "price": 119900.0, "mileage": 13600.0, "pay_method": "Cash", "city": "Indianapolis", "state": "IN", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 33, "date": "2025-07-22", "model": "Panamera 4 E-Hybrid", "year": 2023, "price": 109250.0, "mileage": 8900.0, "pay_method": "Lease", "city": "Fort Worth", "state": "TX", "status": "In Transit", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Em Trânsito"}, {"sale_id": 34, "date": "2025-08-14", "model": "Macan T", "year": 2022, "price": 82000.0, "mileage": 21750.0, "pay_method": "Wire Transfer", "city": "Jacksonville", "state": "FL", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 35, "date": "2025-09-01", "model": "Taycan Turbo S", "year": 2025, "price": 214000.0, "mileage": 0.0, "pay_method": "Crypto Payment", "city": "San Diego", "state": "CA", "status": "Pending Review", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Revisão Pendente"}, {"sale_id": 37, "date": "2025-09-18", "model": "Cayenne S", "year": 2023, "price": 98200.0, "mileage": 12200.0, "pay_method": "Bank Transfer", "city": "Sacramento", "state": "CA", "status": "Pending", "pay_method_pt": "Transferência Bancária", "status_pt": "Pendente"}, {"sale_id": 38, "date": "2025-10-04", "model": "Macan", "year": 2022, "price": 67500.0, "mileage": 24100.0, "pay_method": "Financing", "city": "Cleveland", "state": "OH", "status": "Delivered", "pay_method_pt": "Financiamento", "status_pt": "Entregue"}, {"sale_id": 39, "date": "2025-10-12", "model": "Taycan", "year": 2025, "price": 116900.0, "mileage": 0.0, "pay_method": "Wire Transfer", "city": "Milwaukee", "state": "WI", "status": "In Transit", "pay_method_pt": "Transferência Wire", "status_pt": "Em Trânsito"}, {"sale_id": 40, "date": "2025-10-29", "model": "Panamera 4S", "year": 2024, "price": 112000.0, "mileage": 10.0, "pay_method": "Cash", "city": "Kansas City", "state": "MO", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 41, "date": "2025-02-11", "model": "718 Boxster", "year": 2021, "price": 74000.0, "mileage": 31000.0, "pay_method": "Debit Card", "city": "Omaha", "state": "NE", "status": "Cancelled", "pay_method_pt": "Cartão de Débito", "status_pt": "Cancelado"}, {"sale_id": 42, "date": "2025-11-16", "model": "911 Turbo", "year": 2024, "price": 198300.0, "mileage": 2400.0, "pay_method": "Wire Transfer", "city": "Albuquerque", "state": "NM", "status": "Awaiting Delivery", "pay_method_pt": "Transferência Wire", "status_pt": "Aguardando Entrega"}, {"sale_id": 45, "date": "2025-12-07", "model": "Taycan 4S", "year": 2025, "price": 129000.0, "mileage": 0.0, "pay_method": "ACH Payment", "city": "Virginia Beach", "state": "VA", "status": "In Transit", "pay_method_pt": "Débito Direto (ACH)", "status_pt": "Em Trânsito"}, {"sale_id": 46, "date": "2025-12-22", "model": "Panamera Turbo", "year": 2022, "price": 136000.0, "mileage": 18400.0, "pay_method": "Credit Card", "city": "Colorado Springs", "state": "CO", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 48, "date": "2026-01-08", "model": "Cayenne E-Hybrid", "year": 2023, "price": 92800.0, "mileage": 15000.0, "pay_method": "Lease", "city": "Bakersfield", "state": "CA", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}, {"sale_id": 49, "date": "2026-01-15", "model": "Macan T", "year": 2022, "price": 72400.0, "mileage": 19750.0, "pay_method": "Cash", "city": "Mesa", "state": "AZ", "status": "Awaiting Pickup", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Aguardando Retirada"}, {"sale_id": 50, "date": "2026-01-28", "model": "Taycan Turbo", "year": 2025, "price": 158500.0, "mileage": 3200.0, "pay_method": "Crypto Payment", "city": "Atlanta", "state": "GA", "status": "Delivered", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Entregue"}, {"sale_id": 51, "date": "2026-02-03", "model": "718 Cayman", "year": 2021, "price": 69900.0, "mileage": 27600.0, "pay_method": "Bank Transfer", "city": "Long Beach", "state": "CA", "status": "Pending", "pay_method_pt": "Transferência Bancária", "status_pt": "Pendente"}, {"sale_id": 53, "date": "2026-02-19", "model": "Panamera", "year": 2020, "price": 71500.0, "mileage": 52000.0, "pay_method": "Wire Transfer", "city": "Tulsa", "state": "OK", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 54, "date": "2026-02-25", "model": "Cayenne Turbo", "year": 2023, "price": 146800.0, "mileage": 11300.0, "pay_method": "Credit Card", "city": "Wichita", "state": "KS", "status": "Pending", "pay_method_pt": "Cartão de Crédito", "status_pt": "Pendente"}, {"sale_id": 55, "date": "2026-03-01", "model": "Macan Electric", "year": 2025, "price": 89700.0, "mileage": 0.0, "pay_method": "Lease", "city": "New Orleans", "state": "LA", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}, {"sale_id": 56, "date": "2026-03-14", "model": "911 Carrera S", "year": 2022, "price": 104600.0, "mileage": 15900.0, "pay_method": "Bank Transfer", "city": "Honolulu", "state": "HI", "status": "Cancelled", "pay_method_pt": "Transferência Bancária", "status_pt": "Cancelado"}, {"sale_id": 58, "date": "2026-04-08", "model": "Cayenne", "year": 2021, "price": 78400.0, "mileage": 40250.0, "pay_method": "Cash", "city": "Henderson", "state": "NV", "status": "Awaiting Review", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Aguardando Revisão"}, {"sale_id": 60, "date": "2026-04-21", "model": "911 Dakar", "year": 2024, "price": 268900.0, "mileage": 1400.0, "pay_method": "Credit Card", "city": "Riverside", "state": "CA", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 61, "date": "2026-04-29", "model": "Panamera 4", "year": 2023, "price": 101300.0, "mileage": 12700.0, "pay_method": "Wire Transfer", "city": "Corpus Christi", "state": "TX", "status": "Pending", "pay_method_pt": "Transferência Wire", "status_pt": "Pendente"}, {"sale_id": 62, "date": "2026-05-05", "model": "Macan S", "year": 2021, "price": 66750.0, "mileage": 29800.0, "pay_method": "Cash", "city": "St. Louis", "state": "MO", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 63, "date": "2026-05-14", "model": "Taycan Cross Turismo", "year": 2024, "price": 127900.0, "mileage": 7500.0, "pay_method": "Lease", "city": "Pittsburgh", "state": "PA", "status": "In Transit", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Em Trânsito"}, {"sale_id": 64, "date": "2026-05-23", "model": "Cayenne Turbo GT", "year": 2025, "price": 200000.0, "mileage": 1950.0, "pay_method": "Wire Transfer", "city": "Cincinnati", "state": "OH", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 65, "date": "2026-06-02", "model": "911 Carrera Cabriolet", "year": 2023, "price": 132000.0, "mileage": 8800.0, "pay_method": "Crypto Payment", "city": "Anchorage", "state": "AK", "status": "Pending Review", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Revisão Pendente"}, {"sale_id": 66, "date": "2026-06-15", "model": "718 Cayman GT4 RS", "year": 2024, "price": 176400.0, "mileage": 600.0, "pay_method": "Credit Card", "city": "Plano", "state": "TX", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 68, "date": "2026-07-07", "model": "Macan", "year": 2021, "price": 59000.0, "mileage": 36000.0, "pay_method": "Financing", "city": "Greensboro", "state": "NC", "status": "Awaiting Delivery", "pay_method_pt": "Financiamento", "status_pt": "Aguardando Entrega"}, {"sale_id": 69, "date": "2026-07-20", "model": "Taycan Turbo S", "year": 2025, "price": 218000.0, "mileage": 0.0, "pay_method": "Wire Transfer", "city": "Lincoln", "state": "NE", "status": "Pending", "pay_method_pt": "Transferência Wire", "status_pt": "Pendente"}, {"sale_id": 71, "date": "2026-04-08", "model": "911 Carrera GTS", "year": 2024, "price": 121750.0, "mileage": 5872.0, "pay_method": "Credit Card", "city": "Chandler", "state": "AZ", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 72, "date": "2026-08-18", "model": "718 Boxster GTS", "year": 2023, "price": 91500.0, "mileage": 13300.0, "pay_method": "Lease", "city": "Reno", "state": "NV", "status": "Shipped", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Despachado"}, {"sale_id": 73, "date": "2026-08-31", "model": "Panamera Turbo S", "year": 2022, "price": 134000.0, "mileage": 20100.0, "pay_method": "Wire Transfer", "city": "Buffalo", "state": "NY", "status": "In Transit", "pay_method_pt": "Transferência Wire", "status_pt": "Em Trânsito"}, {"sale_id": 74, "date": "2026-09-09", "model": "Macan GTS", "year": 2024, "price": 96800.0, "mileage": 0.0, "pay_method": "ACH Payment", "city": "Durham", "state": "NC", "status": "Delivered", "pay_method_pt": "Débito Direto (ACH)", "status_pt": "Entregue"}, {"sale_id": 75, "date": "2026-09-17", "model": "Taycan 4S", "year": 2025, "price": 131600.0, "mileage": 2900.0, "pay_method": "Wire Transfer", "city": "Laredo", "state": "TX", "status": "Pending Approval", "pay_method_pt": "Transferência Wire", "status_pt": "Aprovação Pendente"}, {"sale_id": 76, "date": "2026-09-28", "model": "Cayenne E-Hybrid", "year": 2023, "price": 94300.0, "mileage": 13100.0, "pay_method": "Cash", "city": "Madison", "state": "WI", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 77, "date": "2026-10-06", "model": "911 Turbo S", "year": 2025, "price": 242000.0, "mileage": 1100.0, "pay_method": "Crypto Payment", "city": "Lubbock", "state": "TX", "status": "Awaiting Pickup", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Aguardando Retirada"}, {"sale_id": 78, "date": "2026-10-16", "model": "718 Cayman S", "year": 2022, "price": 82750.0, "mileage": 22500.0, "pay_method": "Credit Card", "city": "Toledo", "state": "OH", "status": "Cancelled", "pay_method_pt": "Cartão de Crédito", "status_pt": "Cancelado"}, {"sale_id": 79, "date": "2026-10-29", "model": "Macan Electric", "year": 2026, "price": 91300.0, "mileage": 0.0, "pay_method": "Wire Transfer", "city": "Irvine", "state": "CA", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 80, "date": "2026-11-03", "model": "Panamera", "year": 2021, "price": 79900.0, "mileage": 44800.0, "pay_method": "Financing", "city": "Garland", "state": "TX", "status": "Pending", "pay_method_pt": "Financiamento", "status_pt": "Pendente"}, {"sale_id": 82, "date": "2026-12-11", "model": "911 Targa 4S", "year": 2023, "price": 156500.0, "mileage": 4200.0, "pay_method": "Cash", "city": "Chesapeake", "state": "VA", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 83, "date": "2026-12-24", "model": "Taycan", "year": 2025, "price": 119900.0, "mileage": 1250.0, "pay_method": "Lease", "city": "Scottsdale", "state": "AZ", "status": "Pending", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Pendente"}, {"sale_id": 85, "date": "2026-12-28", "model": "911 GT3", "year": 2024, "price": 224000.0, "mileage": 3000.0, "pay_method": "Wire Transfer", "city": "Boise", "state": "ID", "status": "Awaiting Delivery", "pay_method_pt": "Transferência Wire", "status_pt": "Aguardando Entrega"}, {"sale_id": 86, "date": "2027-01-15", "model": "911 Carrera", "year": 2024, "price": 126900.0, "mileage": 7200.0, "pay_method": "Credit Card", "city": "Orlando", "state": "FL", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 87, "date": "2027-01-29", "model": "Cayenne", "year": 2023, "price": 84500.0, "mileage": 21400.0, "pay_method": "Bank Transfer", "city": "San Jose", "state": "CA", "status": "Pending", "pay_method_pt": "Transferência Bancária", "status_pt": "Pendente"}, {"sale_id": 88, "date": "2027-02-11", "model": "Macan S", "year": 2022, "price": 69800.0, "mileage": 26300.0, "pay_method": "Financing", "city": "Tampa", "state": "FL", "status": "Delivered", "pay_method_pt": "Financiamento", "status_pt": "Entregue"}, {"sale_id": 90, "date": "2027-03-05", "model": "Panamera", "year": 2021, "price": 81000.0, "mileage": 42.0, "pay_method": "Cash", "city": "Austin", "state": "TX", "status": "Delivered", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Entregue"}, {"sale_id": 91, "date": "2027-03-18", "model": "718 Cayman", "year": 2023, "price": 78900.0, "mileage": 17500.0, "pay_method": "Debit Card", "city": "Seattle", "state": "WA", "status": "Cancelled", "pay_method_pt": "Cartão de Débito", "status_pt": "Cancelado"}, {"sale_id": 92, "date": "2027-04-02", "model": "911 Turbo S", "year": 2026, "price": 249300.0, "mileage": 900.0, "pay_method": "Wire Transfer", "city": "Boston", "state": "MA", "status": "Awaiting Delivery", "pay_method_pt": "Transferência Wire", "status_pt": "Aguardando Entrega"}, {"sale_id": 95, "date": "2027-05-12", "model": "Taycan Turbo", "year": 2025, "price": 164000.0, "mileage": 0.0, "pay_method": "ACH Payment", "city": "Dallas", "state": "TX", "status": "In Transit", "pay_method_pt": "Débito Direto (ACH)", "status_pt": "Em Trânsito"}, {"sale_id": 96, "date": "2027-05-27", "model": "Panamera 4S", "year": 2024, "price": 119000.0, "mileage": 13400.0, "pay_method": "Credit Card", "city": "San Francisco", "state": "CA", "status": "Delivered", "pay_method_pt": "Cartão de Crédito", "status_pt": "Entregue"}, {"sale_id": 98, "date": "2027-06-18", "model": "Cayenne E-Hybrid", "year": 2023, "price": 96800.0, "mileage": 14000.0, "pay_method": "Lease", "city": "Charlotte", "state": "NC", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}, {"sale_id": 99, "date": "2027-07-03", "model": "Macan T", "year": 2022, "price": 74400.0, "mileage": 20750.0, "pay_method": "Cash", "city": "Mesa", "state": "AZ", "status": "Awaiting Pickup", "pay_method_pt": "Dinheiro (À Vista)", "status_pt": "Aguardando Retirada"}, {"sale_id": 100, "date": "2027-07-22", "model": "Taycan GTS", "year": 2025, "price": 148500.0, "mileage": 5200.0, "pay_method": "Crypto Payment", "city": "Atlanta", "state": "GA", "status": "Delivered", "pay_method_pt": "Pagamento em Cripto", "status_pt": "Entregue"}, {"sale_id": 101, "date": "2027-08-08", "model": "718 Boxster", "year": 2021, "price": 71900.0, "mileage": 29600.0, "pay_method": "Bank Transfer", "city": "Long Beach", "state": "CA", "status": "Pending", "pay_method_pt": "Transferência Bancária", "status_pt": "Pendente"}, {"sale_id": 103, "date": "2027-09-19", "model": "Panamera Turbo", "year": 2020, "price": 137500.0, "mileage": 48000.0, "pay_method": "Wire Transfer", "city": "Tulsa", "state": "OK", "status": "Delivered", "pay_method_pt": "Transferência Wire", "status_pt": "Entregue"}, {"sale_id": 104, "date": "2027-09-25", "model": "Cayenne Turbo GT", "year": 2025, "price": 204800.0, "mileage": 3300.0, "pay_method": "Credit Card", "city": "Wichita", "state": "KS", "status": "Pending", "pay_method_pt": "Cartão de Crédito", "status_pt": "Pendente"}, {"sale_id": 105, "date": "2027-10-01", "model": "911 Dakar", "year": 2024, "price": 271700.0, "mileage": 1050.0, "pay_method": "Lease", "city": "New Orleans", "state": "LA", "status": "Delivered", "pay_method_pt": "Leasing (Arrendamento)", "status_pt": "Entregue"}];
+
+    // Estado Global dos Filtros
+    let activeFilter = {
+      family: 'ALL',
+      status: 'ALL',
+      payMethod: null,
+      city: null,
+      search: ''
+    };
+
+    // Mapeamento de Cores Porsche para Métodos de Pagamento
+    const PAY_COLORS = {
+      'Transferência Wire': '#D5001C',      // Vermelho Guards Red Porsche
+      'Cartão de Crédito': '#C5A059',        // Ouro Emblema Porsche
+      'Leasing (Arrendamento)': '#3B82F6',   // Azul Club Blau
+      'Dinheiro (À Vista)': '#10B981',       // Verde Esportivo
+      'Transferência Bancária': '#8B5CF6',   // Violeta Executivo
+      'Financiamento': '#F59E0B',            // Âmbar
+      'Pagamento em Cripto': '#06B6D4',      // Ciano Metálico
+      'Débito Direto (ACH)': '#EC4899',      // Rosa Magenta
+      'Cartão de Débito': '#64748B'          // Cinza Chumbo
+    };
+
+    // Formatadores para o padrão brasileiro
+    const formatUSD = (val) => {
+      const numFormatted = new Intl.NumberFormat('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(val);
+      return `US$ ${numFormatted}`;
+    };
+
+    const formatNum = (val) => new Intl.NumberFormat('pt-BR').format(val);
+
+    // Função de extração da linha Porsche
+    function getModelFamily(modelName) {
+      if (modelName.includes('911')) return '911';
+      if (modelName.includes('Taycan')) return 'Taycan';
+      if (modelName.includes('Panamera')) return 'Panamera';
+      if (modelName.includes('Macan')) return 'Macan';
+      if (modelName.includes('Cayenne')) return 'Cayenne';
+      if (modelName.includes('718') || modelName.includes('Boxster') || modelName.includes('Cayman')) return '718';
+      return 'Outro';
+    }
+
+    // Filtragem Reativa dos Dados
+    function getFilteredData() {
+      return RAW_DATA.filter(item => {
+        // Filtro por Linha
+        if (activeFilter.family !== 'ALL') {
+          const fam = getModelFamily(item.model);
+          if (fam !== activeFilter.family) return false;
+        }
+        // Filtro por Status
+        if (activeFilter.status !== 'ALL') {
+          if (activeFilter.status === 'Awaiting') {
+            if (!item.status.includes('Awaiting')) return false;
+          } else if (activeFilter.status === 'Pending') {
+            if (!item.status.includes('Pending')) return false;
+          } else if (activeFilter.status === 'In Transit') {
+            if (!item.status.includes('Transit') && item.status !== 'Shipped') return false;
+          } else {
+            if (item.status !== activeFilter.status) return false;
+          }
+        }
+        // Filtro por Método de Pagamento
+        if (activeFilter.payMethod && item.pay_method_pt !== activeFilter.payMethod) {
+          return false;
+        }
+        // Filtro por Cidade
+        if (activeFilter.city && item.city !== activeFilter.city) {
+          return false;
+        }
+        // Busca Dinâmica
+        if (activeFilter.search) {
+          const q = activeFilter.search.toLowerCase();
+          const match = item.model.toLowerCase().includes(q) ||
+                        item.city.toLowerCase().includes(q) ||
+                        item.state.toLowerCase().includes(q) ||
+                        item.pay_method_pt.toLowerCase().includes(q) ||
+                        item.status_pt.toLowerCase().includes(q) ||
+                        String(item.sale_id).includes(q);
+          if (!match) return false;
+        }
+        return true;
+      });
+    }
+
+    // 1. Renderização dos Cartões de Indicadores (KPIs no Topo)
+    function renderKPIs(data) {
+      const totalSales = data.length;
+      const totalRevenue = data.reduce((acc, d) => acc + d.price, 0);
+      const avgPrice = totalSales > 0 ? totalRevenue / totalSales : 0;
+      
+      let maxVehicle = { model: '-', year: '-', price: 0 };
+      let deliveredCount = 0;
+
+      data.forEach(d => {
+        if (d.price > maxVehicle.price) {
+          maxVehicle = d;
+        }
+        if (d.status === 'Delivered') {
+          deliveredCount++;
+        }
+      });
+
+      document.getElementById('kpi-total-sales').innerText = formatNum(totalSales);
+      document.getElementById('kpi-sales-pct').innerText = totalSales === RAW_DATA.length ? '100% da base ativa' : `${((totalSales/RAW_DATA.length)*100).toFixed(1)}% do total`;
+      
+      document.getElementById('kpi-total-revenue').innerText = formatUSD(totalRevenue);
+      const revInMillions = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(totalRevenue / 1000000);
+      document.getElementById('kpi-revenue-mil').innerText = `US$ ${revInMillions}M faturados`;
+
+      document.getElementById('kpi-avg-price').innerText = formatUSD(avgPrice);
+
+      document.getElementById('kpi-max-price').innerText = formatUSD(maxVehicle.price);
+      document.getElementById('kpi-max-vehicle').innerText = maxVehicle.price > 0 ? `${maxVehicle.model} (${maxVehicle.year})` : '-';
+
+      const deliveredPct = totalSales > 0 ? new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format((deliveredCount / totalSales) * 100) : '0';
+      document.getElementById('kpi-delivered-pct').innerText = `${deliveredPct}%`;
+      document.getElementById('kpi-delivered-count').innerText = `${deliveredCount} entregues`;
+    }
+
+    // 2. Renderização de Indicadores de Métodos de Pagamento
+    function renderPaymentMethods(data) {
+      const payMap = {};
+      data.forEach(d => {
+        const methodPt = d.pay_method_pt;
+        if (!payMap[methodPt]) {
+          payMap[methodPt] = { count: 0, revenue: 0 };
+        }
+        payMap[methodPt].count++;
+        payMap[methodPt].revenue += d.price;
+      });
+
+      // Ordenar por quantidade decrescente
+      const sorted = Object.entries(payMap).sort((a, b) => b[1].count - a[1].count);
+      const totalCount = data.length;
+
+      // Atualizar contador central do gráfico de rosca
+      document.getElementById('donut-center-val').innerText = totalCount;
+
+      // Renderizar fatias SVG do Donut
+      const donutSvg = document.getElementById('donut-svg');
+      donutSvg.innerHTML = '';
+
+      let cumulativePct = 0;
+      const strokeWidth = 14;
+      const radius = 50 - (strokeWidth / 2);
+      const circumference = 2 * Math.PI * radius;
+
+      sorted.forEach(([method, stat]) => {
+        const pct = totalCount > 0 ? stat.count / totalCount : 0;
+        const strokeDasharray = `${pct * circumference} ${circumference}`;
+        const strokeDashoffset = -cumulativePct * circumference;
+        cumulativePct += pct;
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', '50');
+        circle.setAttribute('cy', '50');
+        circle.setAttribute('r', radius);
+        circle.setAttribute('fill', 'transparent');
+        circle.setAttribute('stroke', PAY_COLORS[method] || '#94A3B8');
+        circle.setAttribute('stroke-width', strokeWidth);
+        circle.setAttribute('stroke-dasharray', strokeDasharray);
+        circle.setAttribute('stroke-dashoffset', strokeDashoffset);
+        circle.setAttribute('class', 'cursor-pointer transition-all duration-200 hover:opacity-80');
+        circle.style.opacity = activeFilter.payMethod && activeFilter.payMethod !== method ? '0.3' : '1';
+
+        const pctFormatted = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(pct * 100);
+        circle.addEventListener('mouseenter', (e) => showTooltip(e, `<strong>${method}</strong><br>Quantidade: ${stat.count} vendas (${pctFormatted}%)<br>Faturamento: ${formatUSD(stat.revenue)}`));
+        circle.addEventListener('mousemove', moveTooltip);
+        circle.addEventListener('mouseleave', hideTooltip);
+        circle.addEventListener('click', () => togglePayFilter(method));
+
+        donutSvg.appendChild(circle);
+      });
+
+      // Renderizar Lista Lateral com Indicadores e Barras
+      const legendList = document.getElementById('payment-legend-list');
+      legendList.innerHTML = '';
+
+      sorted.forEach(([method, stat]) => {
+        const pct = totalCount > 0 ? new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format((stat.count / totalCount) * 100) : '0';
+        const isSelected = activeFilter.payMethod === method;
+        const color = PAY_COLORS[method] || '#94A3B8';
+
+        const row = document.createElement('div');
+        row.className = `flex items-center justify-between p-1.5 rounded-lg text-xs cursor-pointer transition border ${
+          isSelected ? 'bg-red-950/40 border-red-800' : 'hover:bg-zinc-800/60 border-transparent'
+        }`;
+        row.style.opacity = activeFilter.payMethod && !isSelected ? '0.4' : '1';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${color}"></span>
+            <span class="font-medium text-zinc-200 truncate">${method}</span>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="mono font-bold text-white">${stat.count}</span>
+            <span class="text-zinc-500 text-[11px]">(${pct}%)</span>
+            <span class="text-zinc-400 font-mono text-[11px] hidden sm:inline">${formatUSD(stat.revenue)}</span>
+          </div>
+        `;
+
+        row.addEventListener('click', () => togglePayFilter(method));
+        legendList.appendChild(row);
+      });
+
+      // Renderizar Visão Alternativa de Barras
+      const barsContainer = document.getElementById('payment-bars-container');
+      barsContainer.innerHTML = '';
+      const maxCount = sorted.length > 0 ? sorted[0][1].count : 1;
+
+      sorted.forEach(([method, stat]) => {
+        const isSelected = activeFilter.payMethod === method;
+        const color = PAY_COLORS[method] || '#94A3B8';
+        const barWidth = (stat.count / maxCount) * 100;
+
+        const barRow = document.createElement('div');
+        barRow.className = `cursor-pointer p-2 rounded-lg transition ${isSelected ? 'bg-red-950/40 border border-red-800' : 'hover:bg-zinc-800/50'}`;
+        barRow.style.opacity = activeFilter.payMethod && !isSelected ? '0.4' : '1';
+        barRow.innerHTML = `
+          <div class="flex justify-between text-xs mb-1">
+            <span class="font-semibold text-zinc-200">${method}</span>
+            <span class="mono text-zinc-300 font-bold">${stat.count} un. • ${formatUSD(stat.revenue)}</span>
+          </div>
+          <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+            <div class="bar-grow h-full rounded-full" style="width: ${barWidth}%; background-color: ${color}"></div>
+          </div>
+        `;
+        barRow.addEventListener('click', () => togglePayFilter(method));
+        barsContainer.appendChild(barRow);
+      });
+    }
+
+    function togglePayFilter(method) {
+      if (activeFilter.payMethod === method) {
+        activeFilter.payMethod = null;
+      } else {
+        activeFilter.payMethod = method;
+      }
+      updateDashboard();
+    }
+
+    // 3. Renderização das Cidades com Maiores Vendas
+    let showAllCities = false;
+
+    function renderCities(data) {
+      const cityMap = {};
+      data.forEach(d => {
+        if (!cityMap[d.city]) {
+          cityMap[d.city] = { count: 0, revenue: 0, state: d.state };
+        }
+        cityMap[d.city].count++;
+        cityMap[d.city].revenue += d.price;
+      });
+
+      // Ordenar por contagem decrescente, depois por receita
+      const sorted = Object.entries(cityMap).sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue);
+
+      const listContainer = document.getElementById('cities-chart-container');
+      listContainer.innerHTML = '';
+
+      const displayList = showAllCities ? sorted : sorted.slice(0, 10);
+      const maxCount = sorted.length > 0 ? sorted[0][1].count : 1;
+
+      displayList.forEach(([city, stat], index) => {
+        const isSelected = activeFilter.city === city;
+        const pctWidth = (stat.count / maxCount) * 100;
+
+        const row = document.createElement('div');
+        row.className = `p-2 rounded-lg transition cursor-pointer border ${
+          isSelected ? 'bg-amber-950/40 border-amber-800' : 'hover:bg-zinc-800/60 border-zinc-800/40 bg-zinc-900/40'
+        }`;
+        row.style.opacity = activeFilter.city && !isSelected ? '0.4' : '1';
+
+        row.innerHTML = `
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="mono font-bold text-[11px] w-5 text-center px-1 py-0.5 rounded ${index === 0 ? 'bg-[#C5A059] text-black font-extrabold' : 'bg-zinc-800 text-zinc-300'}">#${index + 1}</span>
+              <span class="font-bold text-white text-sm">${city}</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-mono">${stat.state}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="mono font-extrabold text-[#DFC488] text-sm">${stat.count} ${stat.count === 1 ? 'venda' : 'vendas'}</span>
+              <span class="text-zinc-400 mono text-xs">${formatUSD(stat.revenue)}</span>
+            </div>
+          </div>
+          <!-- Barra de Progresso Estilo Power BI -->
+          <div class="w-full bg-zinc-800/80 h-2.5 rounded-full overflow-hidden flex items-center">
+            <div class="bar-grow h-full rounded-full bg-gradient-to-r from-[#C5A059] to-[#E5C158]" style="width: ${pctWidth}%"></div>
+          </div>
+        `;
+
+        row.addEventListener('mouseenter', (e) => showTooltip(e, `<strong>${city}, ${stat.state}</strong><br>Total de Veículos Vendidos: ${stat.count}<br>Receita Gerada: ${formatUSD(stat.revenue)}`));
+        row.addEventListener('mousemove', moveTooltip);
+        row.addEventListener('mouseleave', hideTooltip);
+        row.addEventListener('click', () => toggleCityFilter(city));
+
+        listContainer.appendChild(row);
+      });
+
+      if (displayList.length === 0) {
+        listContainer.innerHTML = '<div class="text-center py-8 text-zinc-500 text-xs">Nenhuma cidade localizada com os filtros selecionados.</div>';
+      }
+    }
+
+    function toggleCityFilter(city) {
+      if (activeFilter.city === city) {
+        activeFilter.city = null;
+      } else {
+        activeFilter.city = city;
+      }
+      updateDashboard();
+    }
+
+    // 4. Renderização da Tabela Top 10 Veículos por Preço de Venda
+    function renderTop10Table(data) {
+      const sorted = [...data].sort((a, b) => b.price - a.price).slice(0, 10);
+      const tbody = document.getElementById('top10-table-body');
+      tbody.innerHTML = '';
+
+      const maxPrice = sorted.length > 0 ? sorted[0].price : 1;
+
+      sorted.forEach((vehicle, idx) => {
+        const rank = idx + 1;
+        const pricePct = (vehicle.price / maxPrice) * 100;
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-zinc-800/50 transition group';
+
+        // Estilização das medalhas de rank
+        let rankBadgeClass = 'bg-zinc-800 text-zinc-300';
+        if (rank === 1) rankBadgeClass = 'bg-amber-400 text-zinc-950 font-extrabold shadow-sm shadow-amber-400/30';
+        else if (rank === 2) rankBadgeClass = 'bg-slate-300 text-zinc-950 font-extrabold';
+        else if (rank === 3) rankBadgeClass = 'bg-amber-700 text-white font-extrabold';
+
+        // Estilização dos status traduzidos
+        let statusBadgeClass = 'bg-zinc-800 text-zinc-300 border-zinc-700';
+        if (vehicle.status === 'Delivered') statusBadgeClass = 'bg-emerald-950/70 text-emerald-300 border-emerald-800/80';
+        else if (vehicle.status.includes('Transit') || vehicle.status === 'Shipped') statusBadgeClass = 'bg-blue-950/70 text-blue-300 border-blue-800/80';
+        else if (vehicle.status.includes('Pending') || vehicle.status.includes('Awaiting')) statusBadgeClass = 'bg-amber-950/70 text-amber-300 border-amber-800/80';
+        else if (vehicle.status === 'Cancelled') statusBadgeClass = 'bg-red-950/70 text-red-300 border-red-800/80';
+
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-center">
+            <span class="inline-block w-6 h-6 rounded-full text-center leading-6 text-xs ${rankBadgeClass}">${rank}</span>
+          </td>
+          <td class="py-3 px-3">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-sm group-hover:text-[#D5001C] transition">${vehicle.model}</span>
+            </div>
+            <span class="text-[11px] text-zinc-500 font-mono">ID #${vehicle.sale_id} • ${vehicle.date}</span>
+          </td>
+          <td class="py-3 px-3 text-center font-mono text-zinc-300 font-semibold">${vehicle.year}</td>
+          <td class="py-3 px-3">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="mono font-extrabold text-white text-sm tracking-tight">${formatUSD(vehicle.price)}</span>
+              <span class="text-[10px] text-zinc-500 font-mono">${pricePct.toFixed(0)}% do máximo</span>
+            </div>
+            <!-- Barra de Proporção Inline (Data Bar Power BI) -->
+            <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden">
+              <div class="h-full rounded-full bg-gradient-to-r from-red-600 to-[#D5001C]" style="width: ${pricePct}%"></div>
+            </div>
+          </td>
+          <td class="py-3 px-3">
+            <span class="text-zinc-200 font-medium">${vehicle.city}</span>,
+            <span class="text-zinc-400 font-mono">${vehicle.state}</span>
+          </td>
+          <td class="py-3 px-3">
+            <span class="porsche-badge border border-zinc-700 bg-zinc-800/80 text-zinc-300" style="border-left: 3px solid ${PAY_COLORS[vehicle.pay_method_pt] || '#FFF'}">
+              ${vehicle.pay_method_pt}
+            </span>
+          </td>
+          <td class="py-3 px-3 text-center">
+            <span class="porsche-badge border ${statusBadgeClass}">${vehicle.status_pt}</span>
+          </td>
+          <td class="py-3 px-3 text-right font-mono text-zinc-400">
+            ${vehicle.mileage === 0 ? '<span class="text-emerald-400 font-bold uppercase text-[10px]">0 km (Zero-Km)</span>' : formatNum(vehicle.mileage) + ' km'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-zinc-500">Nenhum veículo encontrado para os filtros selecionados.</td></tr>';
+      }
+    }
+
+    // 5. Renderização do Mix por Família Porsche
+    function renderFamilyBreakdown(data) {
+      const famMap = { '911': 0, 'Taycan': 0, 'Panamera': 0, 'Macan': 0, 'Cayenne': 0, '718': 0 };
+      const famRev = { '911': 0, 'Taycan': 0, 'Panamera': 0, 'Macan': 0, 'Cayenne': 0, '718': 0 };
+
+      data.forEach(d => {
+        const fam = getModelFamily(d.model);
+        if (famMap[fam] !== undefined) {
+          famMap[fam]++;
+          famRev[fam] += d.price;
+        }
+      });
+
+      const container = document.getElementById('family-breakdown-container');
+      container.innerHTML = '';
+      const totalCount = data.length;
+
+      const familyEntries = Object.entries(famMap).sort((a, b) => b[1] - a[1]);
+
+      familyEntries.forEach(([fam, count]) => {
+        const rev = famRev[fam];
+        const pct = totalCount > 0 ? new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format((count / totalCount) * 100) : '0';
+        const isSelected = activeFilter.family === fam;
+
+        const item = document.createElement('div');
+        item.className = `p-2 rounded-lg cursor-pointer transition border ${
+          isSelected ? 'bg-red-950/40 border-red-800' : 'hover:bg-zinc-800/60 border-zinc-800/40 bg-zinc-900/30'
+        }`;
+
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-xs mb-1">
+            <span class="font-bold text-white">${fam}</span>
+            <div class="flex items-center gap-2">
+              <span class="mono font-bold text-zinc-200">${count} un. (${pct}%)</span>
+              <span class="text-zinc-400 mono">${formatUSD(rev)}</span>
+            </div>
+          </div>
+          <div class="w-full bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+            <div class="h-full rounded-full bg-[#D5001C]" style="width: ${pct}%"></div>
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          if (activeFilter.family === fam) {
+            activeFilter.family = 'ALL';
+          } else {
+            activeFilter.family = fam;
+          }
+          document.querySelectorAll('[data-filter="family"]').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-value') === activeFilter.family);
+          });
+          updateDashboard();
+        });
+
+        container.appendChild(item);
+      });
+    }
+
+    // 6. Renderização da Tabela Geral com Busca e Paginação
+    function renderRawTable(data) {
+      const tbody = document.getElementById('raw-table-body');
+      tbody.innerHTML = '';
+      document.getElementById('filtered-records-badge').innerText = `${data.length} registros`;
+
+      data.slice(0, 50).forEach(d => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-zinc-800/40 transition text-zinc-300';
+        tr.innerHTML = `
+          <td class="py-2 px-2 font-mono text-zinc-500 font-semibold">#${d.sale_id}</td>
+          <td class="py-2 px-2 text-zinc-400">${d.date}</td>
+          <td class="py-2 px-2 font-medium text-white">${d.model}</td>
+          <td class="py-2 px-2 font-mono text-center">${d.year}</td>
+          <td class="py-2 px-2 font-mono font-bold text-emerald-400">${formatUSD(d.price)}</td>
+          <td class="py-2 px-2">${d.pay_method_pt}</td>
+          <td class="py-2 px-2">${d.city}, ${d.state}</td>
+          <td class="py-2 px-2 text-center"><span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800">${d.status_pt}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Atualização da etiqueta de filtros ativos
+    function updateActiveFilterPill() {
+      const pill = document.getElementById('active-filters-pill');
+      const text = document.getElementById('active-filters-text');
+      const parts = [];
+
+      if (activeFilter.family !== 'ALL') parts.push(`Linha: ${activeFilter.family}`);
+      if (activeFilter.status !== 'ALL') {
+        const statusLabels = {
+          'Delivered': 'Entregue',
+          'In Transit': 'Em Trânsito',
+          'Pending': 'Pendente',
+          'Awaiting': 'Aguardando',
+          'Cancelled': 'Cancelado'
+        };
+        parts.push(`Status: ${statusLabels[activeFilter.status] || activeFilter.status}`);
+      }
+      if (activeFilter.payMethod) parts.push(`Pagamento: ${activeFilter.payMethod}`);
+      if (activeFilter.city) parts.push(`Cidade: ${activeFilter.city}`);
+      if (activeFilter.search) parts.push(`Busca: "${activeFilter.search}"`);
+
+      if (parts.length > 0) {
+        text.innerText = parts.join(' | ');
+        pill.classList.remove('hidden');
+        pill.classList.add('flex');
+      } else {
+        pill.classList.remove('flex');
+        pill.classList.add('hidden');
+      }
+    }
+
+    // Atualização Completa do Painel
+    function updateDashboard() {
+      const filtered = getFilteredData();
+      renderKPIs(filtered);
+      renderPaymentMethods(filtered);
+      renderCities(filtered);
+      renderTop10Table(filtered);
+      renderFamilyBreakdown(filtered);
+      renderRawTable(filtered);
+      updateActiveFilterPill();
+    }
+
+    // Manipulação do Tooltip Flutuante
+    const tooltip = document.getElementById('dashboard-tooltip');
+    function showTooltip(e, content) {
+      tooltip.innerHTML = content;
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = e.clientY + 'px';
+      tooltip.classList.remove('hidden');
+      tooltip.style.opacity = '1';
+    }
+    function moveTooltip(e) {
+      tooltip.style.left = e.clientX + 'px';
+      tooltip.style.top = e.clientY + 'px';
+    }
+    function hideTooltip() {
+      tooltip.classList.add('hidden');
+      tooltip.style.opacity = '0';
+    }
+
+    // Inicialização dos Ouvintes de Eventos
+    document.addEventListener('DOMContentLoaded', () => {
+      // Segmentador: Linha do Veículo
+      document.querySelectorAll('[data-filter="family"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-filter="family"]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeFilter.family = btn.getAttribute('data-value');
+          updateDashboard();
+        });
+      });
+
+      // Segmentador: Status de Entrega
+      document.querySelectorAll('[data-filter="status"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-filter="status"]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeFilter.status = btn.getAttribute('data-value');
+          updateDashboard();
+        });
+      });
+
+      // Campo de Busca
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        activeFilter.search = e.target.value.trim();
+        updateDashboard();
+      });
+
+      // Limpar Todos os Filtros
+      const resetAll = () => {
+        activeFilter = { family: 'ALL', status: 'ALL', payMethod: null, city: null, search: '' };
+        document.querySelectorAll('[data-filter="family"]').forEach(b => b.classList.toggle('active', b.getAttribute('data-value') === 'ALL'));
+        document.querySelectorAll('[data-filter="status"]').forEach(b => b.classList.toggle('active', b.getAttribute('data-value') === 'ALL'));
+        document.getElementById('search-input').value = '';
+        updateDashboard();
+      };
+
+      document.getElementById('reset-all-btn').addEventListener('click', resetAll);
+      document.getElementById('clear-filters-btn').addEventListener('click', resetAll);
+
+      // Alternar visualização dos métodos de pagamento (Rosca / Barras)
+      const btnDonut = document.getElementById('view-pay-donut');
+      const btnBars = document.getElementById('view-pay-bars');
+      const donutWrap = document.getElementById('payment-donut-container');
+      const barsWrap = document.getElementById('payment-bars-container');
+
+      btnDonut.addEventListener('click', () => {
+        btnDonut.classList.add('bg-zinc-800', 'text-white', 'font-semibold');
+        btnDonut.classList.remove('text-zinc-400');
+        btnBars.classList.remove('bg-zinc-800', 'text-white', 'font-semibold');
+        btnBars.classList.add('text-zinc-400');
+        donutWrap.classList.remove('hidden');
+        barsWrap.classList.add('hidden');
+      });
+
+      btnBars.addEventListener('click', () => {
+        btnBars.classList.add('bg-zinc-800', 'text-white', 'font-semibold');
+        btnBars.classList.remove('text-zinc-400');
+        btnDonut.classList.remove('bg-zinc-800', 'text-white', 'font-semibold');
+        btnDonut.classList.add('text-zinc-400');
+        donutWrap.classList.add('hidden');
+        barsWrap.classList.remove('hidden');
+      });
+
+      // Alternar cidades (Principais vs Todas)
+      const btnCityTop = document.getElementById('city-toggle-top');
+      const btnCityAll = document.getElementById('city-toggle-all');
+
+      btnCityTop.addEventListener('click', () => {
+        showAllCities = false;
+        btnCityTop.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#C5A059] text-black';
+        btnCityAll.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+        renderCities(getFilteredData());
+      });
+
+      btnCityAll.addEventListener('click', () => {
+        showAllCities = true;
+        btnCityAll.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-[#C5A059] text-black';
+        btnCityTop.className = 'px-2.5 py-1 rounded text-xs font-semibold bg-zinc-800 text-zinc-300 hover:text-white';
+        renderCities(getFilteredData());
+      });
+
+      // Expandir / Recolher tabela de vendas
+      let isTableExpanded = false;
+      document.getElementById('toggle-all-data-btn').addEventListener('click', () => {
+        const wrap = document.getElementById('drillthrough-table-wrap');
+        const btn = document.getElementById('toggle-all-data-btn');
+        isTableExpanded = !isTableExpanded;
+        if (isTableExpanded) {
+          wrap.classList.remove('max-h-[320px]');
+          wrap.classList.add('max-h-[600px]');
+          btn.innerText = 'Recolher Tabela';
+        } else {
+          wrap.classList.remove('max-h-[600px]');
+          wrap.classList.add('max-h-[320px]');
+          btn.innerText = 'Expandir Tabela Completa';
+        }
+      });
+
+      // Exportar CSV dos dados filtrados em português
+      document.getElementById('export-csv-btn').addEventListener('click', () => {
+        const data = getFilteredData();
+        const headers = ['id_venda', 'data_venda', 'modelo_porsche', 'ano_modelo', 'preco_venda_usd', 'quilometragem_km', 'metodo_pagamento', 'cidade', 'estado', 'status_entrega'];
+        const csvRows = [headers.join(',')];
+        data.forEach(d => {
+          csvRows.push([d.sale_id, `"${d.date}"`, `"${d.model}"`, d.year, d.price, d.mileage, `"${d.pay_method_pt}"`, `"${d.city}"`, `"${d.state}"`, `"${d.status_pt}"`].join(','));
+        });
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `vendas_porsche_executivo_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Renderização inicial
+      updateDashboard();
+    });
+  </script>
+</body>
+</html>
